@@ -1,4 +1,9 @@
-C:\Users\Zain\eclipse-workspace\scheduling-system\src\main\java\appointment_system\domain\Admin.java
-C:\Users\Zain\eclipse-workspace\scheduling-system\src\main\java\appointment_system\domain\User.java
-C:\Users\Zain\eclipse-workspace\scheduling-system\src\main\java\appointment_system\repository\UserRepository.java
-C:\Users\Zain\eclipse-workspace\scheduling-system\src\main\java\appointment_system\service\AuthenticationService.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\domain\Admin.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\domain\Appointment.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\domain\AppointmentSlot.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\domain\AppointmentStatus.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\domain\User.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\repository\AppointmentRepository.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\repository\UserRepository.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\service\AppointmentService.java
+C:\Users\Zain\git\repository\scheduling-system\src\main\java\appointment_system\service\AuthenticationService.java
