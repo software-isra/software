@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="appointment_system.service.AuthenticationServiceTest" time="0.01" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="appointment_system.service.AuthenticationServiceTest" time="0.016" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-23\bin"/>
-    <property name="sun.java.command" value="C:\Users\Zain\AppData\Local\Temp\surefire11960247952835513211\surefirebooter-20260315192316385_3.jar C:\Users\Zain\AppData\Local\Temp\surefire11960247952835513211 2026-03-15T19-23-16_274-jvmRun1 surefire-20260315192316385_1tmp surefire_0-20260315192316385_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\Zain\AppData\Local\Temp\surefire15694728632022153993\surefirebooter-20260325232931816_3.jar C:\Users\Zain\AppData\Local\Temp\surefire15694728632022153993 2026-03-25T23-29-31_714-jvmRun1 surefire-20260325232931816_1tmp surefire_0-20260325232931816_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\Zain\git\repository\scheduling-system\target\test-classes;C:\Users\Zain\git\repository\scheduling-system\target\classes;C:\Users\Zain\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Zain\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Zain\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Zain\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Zain\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Zain\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Zain\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Zain\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\Zain\.m2\repository\org\mockito\mockito-core\5.10.0\mockito-core-5.10.0.jar;C:\Users\Zain\.m2\repository\net\bytebuddy\byte-buddy\1.14.11\byte-buddy-1.14.11.jar;C:\Users\Zain\.m2\repository\net\bytebuddy\byte-buddy-agent\1.14.11\byte-buddy-agent-1.14.11.jar;C:\Users\Zain\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Zain\AppData\Local\Temp\surefire11960247952835513211\surefirebooter-20260315192316385_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Zain\AppData\Local\Temp\surefire15694728632022153993\surefirebooter-20260325232931816_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="23.0.1+11-39"/>
@@ -59,6 +59,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="loginShouldSucceed" classname="appointment_system.service.AuthenticationServiceTest" time="0.003"/>
-  <testcase name="loginShouldFail" classname="appointment_system.service.AuthenticationServiceTest" time="0.003"/>
+  <testcase name="testLoginSuccess" classname="appointment_system.service.AuthenticationServiceTest" time="0.006"/>
+  <testcase name="testLoginFailureUserNotFound" classname="appointment_system.service.AuthenticationServiceTest" time="0.002"/>
+  <testcase name="testLogout" classname="appointment_system.service.AuthenticationServiceTest" time="0.003"/>
+  <testcase name="testLoginFailureWrongPassword" classname="appointment_system.service.AuthenticationServiceTest" time="0.001"/>
 </testsuite>
