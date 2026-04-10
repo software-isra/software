@@ -1,9 +1,10 @@
-appointment_system\domain\Appointment.class
 appointment_system\domain\AppointmentStatus.class
 appointment_system\repository\AppointmentRepository.class
-appointment_system\domain\AppointmentSlot.class
 appointment_system\service\AppointmentService.class
 appointment_system\service\AuthenticationService.class
 appointment_system\domain\Admin.class
 appointment_system\domain\User.class
 appointment_system\repository\UserRepository.class
+appointment_system\domain\Appointment.class
+appointment_system\domain\AppointmentSlot.class
+appointment_system\ui\MainGUI.class

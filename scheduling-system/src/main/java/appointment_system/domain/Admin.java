@@ -1,18 +1,18 @@
 package appointment_system.domain;
 
-public class Admin extends User  {
+/**
+ * Represents an administrator in the appointment scheduling system.
+ 
+ */
+public class Admin extends User {
 
-	  /**
-	   * 
-	   * @param username
-	   * @param password
-	   */
-
-		public Admin(String username, String password) {
-			super(username, password);
-			// TODO Auto-generated constructor stub
-		}
-
-	}
-
-
+    /**
+     * Creates an administrator account.
+     *
+     * @param username admin username
+     * @param password admin password
+     */
+    public Admin(String username, String password) {
+        super(username, password);
+    }
+}

@@ -1,2 +1,3 @@
 appointment_system\service\AppointmentServiceTest.class
 appointment_system\service\AuthenticationServiceTest.class
+appointment_system\domain\DomainTest.class

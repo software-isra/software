@@ -1,41 +1,42 @@
 package appointment_system.domain;
+
 /**
- *Represents an appointment in the scheduling system
- *Each appointment contains a time slot, the username of the user
- *who booked the appointment, and the appointment status
+ * Represents a confirmed appointment booked by a user.
+
  */
- public class Appointment {
-	private AppointmentSlot slot;
-    private String username;
-    private AppointmentStatus status;
-/**
- * 
- * @param slot
- * @param username
- */
+public class Appointment {
+
+    private final AppointmentSlot slot;
+    private final String username;
+    private final AppointmentStatus status;
+
+    /**
+     * Creates a confirmed appointment.
+     *
+     * @param slot the appointment slot
+     * @param username username of the customer
+     */
     public Appointment(AppointmentSlot slot, String username) {
+        if (slot == null) {
+            throw new IllegalArgumentException("Slot must not be null");
+        }
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username must not be blank");
+        }
+
         this.slot = slot;
-        this.username = username;
+        this.username = username.trim();
         this.status = AppointmentStatus.CONFIRMED;
     }
-/**
- * 
- * @return slot
- */
+
     public AppointmentSlot getSlot() {
         return slot;
     }
-/**
- * 
- * @return username 
- */
+
     public String getUsername() {
         return username;
     }
-/**
- * 
- * @return Appointment Status
- */
+
     public AppointmentStatus getStatus() {
         return status;
     }
