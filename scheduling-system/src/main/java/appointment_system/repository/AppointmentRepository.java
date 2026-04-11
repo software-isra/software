@@ -8,8 +8,6 @@ import appointment_system.domain.AppointmentSlot;
 
 /**
  * In-memory repository for appointment slots and bookings.
- *
- 
  */
 public class AppointmentRepository {
 

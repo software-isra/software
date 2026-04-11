@@ -13,7 +13,6 @@ import appointment_system.strategy.BookingRuleStrategy;
 
 /**
  * Handles booking operations and booking validation rules.
- *
  */
 public class AppointmentService {
 
@@ -34,6 +33,13 @@ public class AppointmentService {
         return repository.getSlots()
                 .stream()
                 .filter(slot -> !slot.isFull())
+                .sorted(Comparator.comparing(AppointmentSlot::getStartTime))
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentSlot> getAllSlots() {
+        return repository.getSlots()
+                .stream()
                 .sorted(Comparator.comparing(AppointmentSlot::getStartTime))
                 .collect(Collectors.toList());
     }

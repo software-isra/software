@@ -43,14 +43,14 @@ public class MainGUI extends JFrame {
 
     private JComboBox<String> filterComboBox;
 
-    private final Color COLOR_PRIMARY = new Color(33, 47, 61);
-    private final Color COLOR_ACCENT = new Color(52, 152, 219);
-    private final Color COLOR_BG = new Color(242, 244, 244);
+    private final Color COLOR_PRIMARY = new Color(24, 28, 37);
+    private final Color COLOR_ACCENT = new Color(37, 99, 235);
+    private final Color COLOR_BG = new Color(245, 247, 250);
 
-    private final Color COLOR_LOW = new Color(46, 204, 113);
-    private final Color COLOR_MEDIUM = new Color(241, 196, 15);
-    private final Color COLOR_HIGH = new Color(231, 76, 60);
-    private final Color COLOR_FULL = new Color(149, 165, 166);
+    private final Color COLOR_LOW = new Color(34, 197, 94);
+    private final Color COLOR_MEDIUM = new Color(255, 215, 0);
+    private final Color COLOR_HIGH = new Color(239, 68, 68);
+    private final Color COLOR_FULL = new Color(107, 114, 128);
 
     public MainGUI(AuthenticationService authService,
                    AppointmentService appointmentService,
@@ -120,9 +120,6 @@ public class MainGUI extends JFrame {
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(COLOR_BG);
 
-        JPanel topContainer = new JPanel(new BorderLayout());
-        topContainer.setBackground(COLOR_BG);
-
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
         header.setBorder(new EmptyBorder(15, 25, 15, 25));
@@ -131,8 +128,13 @@ public class MainGUI extends JFrame {
         title.setFont(new Font("Segoe UI", Font.BOLD, 24));
         title.setForeground(COLOR_PRIMARY);
 
-        JButton back = new JButton("Home");
-        back.addActionListener(e -> cardLayout.show(cardPanel, "START"));
+        JButton back = createStyledButton("Home", COLOR_PRIMARY);
+        back.addActionListener(e -> {
+            if (filterComboBox != null) {
+                filterComboBox.setSelectedItem("All");
+            }
+            cardLayout.show(cardPanel, "START");
+        });
 
         header.add(title, BorderLayout.WEST);
         header.add(back, BorderLayout.EAST);
@@ -168,6 +170,7 @@ public class MainGUI extends JFrame {
                 "Almost Full",
                 "Full"
         });
+        filterComboBox.setSelectedItem("All");
         filterComboBox.addActionListener(e -> refreshUserSlots());
 
         filterPanel.add(filterLabel);
@@ -244,7 +247,7 @@ public class MainGUI extends JFrame {
 
         userGridPanel.removeAll();
 
-        List<AppointmentSlot> allSlots = appointmentService.getAvailableSlots();
+        List<AppointmentSlot> allSlots = appointmentService.getAllSlots();
 
         int totalSlots = allSlots.size();
         int fullSlots = 0;
@@ -347,9 +350,10 @@ public class MainGUI extends JFrame {
         progressBar.setBackground(new Color(240, 240, 240));
         progressBar.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton book = new JButton(slot.isFull() ? "Full" : "Book");
-        book.setBackground(slot.isFull() ? COLOR_FULL : COLOR_ACCENT);
-        book.setForeground(Color.WHITE);
+        JButton book = createStyledButton(
+                slot.isFull() ? "Full" : "Book",
+                slot.isFull() ? COLOR_FULL : COLOR_ACCENT
+        );
         book.setEnabled(!slot.isFull());
 
         book.addActionListener(e -> openBookingDialog(slot));
@@ -495,7 +499,7 @@ public class MainGUI extends JFrame {
             }
         });
 
-        JButton backBtn = new JButton("Back");
+        JButton backBtn = createStyledButton("Back", COLOR_ACCENT);
         backBtn.addActionListener(e -> cardLayout.show(cardPanel, "START"));
 
         JLabel title = new JLabel("ADMIN AUTHENTICATION");
@@ -527,7 +531,7 @@ public class MainGUI extends JFrame {
         title.setForeground(Color.WHITE);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
 
-        JButton logout = new JButton("Logout");
+        JButton logout = createStyledButton("Logout", COLOR_HIGH);
         logout.addActionListener(e -> {
             authService.logout();
             cardLayout.show(cardPanel, "START");
@@ -553,9 +557,9 @@ public class MainGUI extends JFrame {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         actionPanel.setBackground(COLOR_BG);
 
-        JButton refreshBtn = new JButton("Refresh");
-        JButton cancelBtn = new JButton("Cancel Selected");
-        JButton modifyBtn = new JButton("Modify Selected");
+        JButton refreshBtn = createStyledButton("Refresh", COLOR_ACCENT);
+        JButton cancelBtn = createStyledButton("Cancel Selected", COLOR_HIGH);
+        JButton modifyBtn = createStyledButton("Modify Selected", COLOR_PRIMARY);
 
         refreshBtn.addActionListener(e -> refreshAdminTable());
         cancelBtn.addActionListener(e -> cancelSelectedReservation());
@@ -631,11 +635,11 @@ public class MainGUI extends JFrame {
         }
 
         Appointment appointment = appointmentService.getAllAppointments().get(row);
-        List<AppointmentSlot> availableSlots = appointmentService.getAvailableSlots();
+        List<AppointmentSlot> availableSlots = appointmentService.getAllSlots();
 
         DefaultComboBoxModel<SlotItem> model = new DefaultComboBoxModel<>();
         for (AppointmentSlot slot : availableSlots) {
-            if (!slot.equals(appointment.getSlot())) {
+            if (!slot.equals(appointment.getSlot()) && !slot.isFull()) {
                 model.addElement(new SlotItem(slot));
             }
         }
@@ -693,8 +697,13 @@ public class MainGUI extends JFrame {
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
         button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setContentAreaFilled(true);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setMaximumSize(new Dimension(250, 45));
+        button.setPreferredSize(new Dimension(160, 40));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 
@@ -711,7 +720,7 @@ public class MainGUI extends JFrame {
                 if ("Low Booking".equals(status)) {
                     component.setBackground(new Color(220, 252, 231));
                 } else if ("Medium Booking".equals(status)) {
-                    component.setBackground(new Color(254, 249, 195));
+                    component.setBackground(new Color(255, 249, 196));
                 } else if ("Almost Full".equals(status)) {
                     component.setBackground(new Color(254, 226, 226));
                 } else if ("Full".equals(status)) {
