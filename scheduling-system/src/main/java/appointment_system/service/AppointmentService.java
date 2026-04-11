@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import appointment_system.domain.Appointment;
 import appointment_system.domain.AppointmentSlot;
 import appointment_system.domain.AppointmentType;
-import appointment_system.notification.EmailNotificationObserver;
 import appointment_system.notification.NotificationService;
+import appointment_system.notification.ConsoleNotificationService;
 import appointment_system.repository.AppointmentRepository;
 import appointment_system.strategy.BookingRuleFactory;
 import appointment_system.strategy.BookingRuleStrategy;
@@ -25,14 +25,20 @@ public class AppointmentService {
     private final NotificationService notificationService;
 
     public AppointmentService(AppointmentRepository repository) {
+        this(repository, new ConsoleNotificationService());
+    }
+
+    public AppointmentService(AppointmentRepository repository, NotificationService notificationService) {
         if (repository == null) {
             throw new IllegalArgumentException("Appointment repository must not be null");
         }
+        if (notificationService == null) {
+            throw new IllegalArgumentException("Notification service must not be null");
+        }
+
         this.repository = repository;
         this.bookingRuleFactory = new BookingRuleFactory();
-
-        this.notificationService = new NotificationService();
-        this.notificationService.attach(new EmailNotificationObserver());
+        this.notificationService = notificationService;
     }
 
     public List<AppointmentSlot> getAvailableSlots() {
@@ -64,20 +70,16 @@ public class AppointmentService {
     public boolean bookAppointment(String username, AppointmentSlot slot, AppointmentType type) {
         validateBookingRequest(username, slot, type);
 
-        if (slot.isFull()) {
-            return false;
-        }
-
-        if (repository.hasBooking(username.trim(), slot)) {
-            return false;
-        }
+        if (slot.isFull()) return false;
+        if (repository.hasBooking(username.trim(), slot)) return false;
 
         slot.addParticipant();
         Appointment appointment = new Appointment(slot, username.trim(), type);
         repository.saveAppointment(appointment);
 
-        notificationService.notifyAllObservers(
-                "Appointment booked successfully for user: " + username
+        notificationService.sendReminder(
+                username,
+                "Appointment booked successfully"
         );
 
         return true;
@@ -92,19 +94,15 @@ public class AppointmentService {
         }
 
         Appointment appointment = repository.findActiveAppointment(username.trim(), slot);
-        if (appointment == null) {
-            return false;
-        }
-
-        if (slot.isInPast()) {
-            return false;
-        }
+        if (appointment == null) return false;
+        if (slot.isInPast()) return false;
 
         slot.removeParticipant();
         appointment.cancel();
 
-        notificationService.notifyAllObservers(
-                "Appointment cancelled for user: " + username
+        notificationService.sendReminder(
+                username,
+                "Appointment cancelled"
         );
 
         return true;
@@ -119,30 +117,21 @@ public class AppointmentService {
         }
 
         Appointment appointment = repository.findActiveAppointment(username.trim(), oldSlot);
-        if (appointment == null) {
-            return false;
-        }
-
-        if (oldSlot.isInPast()) {
-            return false;
-        }
+        if (appointment == null) return false;
+        if (oldSlot.isInPast()) return false;
 
         validateBookingRequest(username, newSlot, appointment.getType());
 
-        if (newSlot.isFull()) {
-            return false;
-        }
-
-        if (repository.hasBooking(username.trim(), newSlot)) {
-            return false;
-        }
+        if (newSlot.isFull()) return false;
+        if (repository.hasBooking(username.trim(), newSlot)) return false;
 
         oldSlot.removeParticipant();
         newSlot.addParticipant();
         appointment.setSlot(newSlot);
 
-        notificationService.notifyAllObservers(
-                "Appointment modified for user: " + username
+        notificationService.sendReminder(
+                username,
+                "Appointment modified"
         );
 
         return true;

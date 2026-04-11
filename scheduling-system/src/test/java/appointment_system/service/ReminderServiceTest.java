@@ -1,12 +1,16 @@
 package appointment_system.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import appointment_system.domain.Appointment;
 import appointment_system.domain.AppointmentSlot;
@@ -22,7 +26,7 @@ class ReminderServiceTest {
     @BeforeEach
     void setUp() {
         repo = new AppointmentRepository();
-        notificationService = new NotificationService();
+        notificationService = Mockito.mock(NotificationService.class);
         reminderService = new ReminderService(repo, notificationService);
     }
 
@@ -38,6 +42,9 @@ class ReminderServiceTest {
 
         assertEquals(1, messages.size());
         assertTrue(messages.get(0).contains("Reminder: You have an appointment on"));
+
+        verify(notificationService, times(1))
+                .sendReminder(Mockito.eq("user1"), Mockito.anyString());
     }
 
     @Test
@@ -51,6 +58,9 @@ class ReminderServiceTest {
         List<String> messages = reminderService.sendUpcomingAppointmentReminders();
 
         assertTrue(messages.isEmpty());
+
+        verify(notificationService, times(0))
+                .sendReminder(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -64,11 +74,14 @@ class ReminderServiceTest {
         List<String> messages = reminderService.sendUpcomingAppointmentReminders();
 
         assertTrue(messages.isEmpty());
+
+        verify(notificationService, times(0))
+                .sendReminder(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     void testBuildReminderMessageRejectsNullAppointment() {
-        assertThrows(IllegalArgumentException.class, () ->
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () ->
                 reminderService.buildReminderMessage(null));
     }
 
