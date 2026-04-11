@@ -31,6 +31,11 @@ public class ReminderService {
         this.notificationService = notificationService;
     }
 
+    /**
+     * Sends reminders for appointments happening within the next 24 hours.
+     *
+     * @return list of generated reminder messages
+     */
     public List<String> sendUpcomingAppointmentReminders() {
         List<String> generatedMessages = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
@@ -39,11 +44,16 @@ public class ReminderService {
             LocalDateTime appointmentTime = appointment.getSlot().getStartTime();
 
             boolean isFutureAppointment = appointmentTime.isAfter(now);
-            boolean withinNext24Hours = Duration.between(now, appointmentTime).toHours() <= 24;
+            boolean withinNext24Hours =
+                    Duration.between(now, appointmentTime).toHours() <= 24;
 
             if (isFutureAppointment && withinNext24Hours) {
                 String message = buildReminderMessage(appointment);
-                notificationService.sendReminder(appointment.getUsername(), message);
+
+                notificationService.notifyAllObservers(
+                        "Reminder for " + appointment.getUsername() + ": " + message
+                );
+
                 generatedMessages.add(message);
             }
         }
@@ -51,6 +61,12 @@ public class ReminderService {
         return generatedMessages;
     }
 
+    /**
+     * Builds a reminder message for a single appointment.
+     *
+     * @param appointment the appointment
+     * @return formatted reminder message
+     */
     public String buildReminderMessage(Appointment appointment) {
         if (appointment == null) {
             throw new IllegalArgumentException("Appointment must not be null");

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import appointment_system.domain.Appointment;
 import appointment_system.domain.AppointmentSlot;
 import appointment_system.domain.AppointmentType;
+import appointment_system.notification.EmailNotificationObserver;
+import appointment_system.notification.NotificationService;
 import appointment_system.repository.AppointmentRepository;
 import appointment_system.strategy.BookingRuleFactory;
 import appointment_system.strategy.BookingRuleStrategy;
@@ -20,6 +22,7 @@ public class AppointmentService {
 
     private final AppointmentRepository repository;
     private final BookingRuleFactory bookingRuleFactory;
+    private final NotificationService notificationService;
 
     public AppointmentService(AppointmentRepository repository) {
         if (repository == null) {
@@ -27,6 +30,9 @@ public class AppointmentService {
         }
         this.repository = repository;
         this.bookingRuleFactory = new BookingRuleFactory();
+
+        this.notificationService = new NotificationService();
+        this.notificationService.attach(new EmailNotificationObserver());
     }
 
     public List<AppointmentSlot> getAvailableSlots() {
@@ -69,6 +75,11 @@ public class AppointmentService {
         slot.addParticipant();
         Appointment appointment = new Appointment(slot, username.trim(), type);
         repository.saveAppointment(appointment);
+
+        notificationService.notifyAllObservers(
+                "Appointment booked successfully for user: " + username
+        );
+
         return true;
     }
 
@@ -91,6 +102,11 @@ public class AppointmentService {
 
         slot.removeParticipant();
         appointment.cancel();
+
+        notificationService.notifyAllObservers(
+                "Appointment cancelled for user: " + username
+        );
+
         return true;
     }
 
@@ -124,6 +140,10 @@ public class AppointmentService {
         oldSlot.removeParticipant();
         newSlot.addParticipant();
         appointment.setSlot(newSlot);
+
+        notificationService.notifyAllObservers(
+                "Appointment modified for user: " + username
+        );
 
         return true;
     }

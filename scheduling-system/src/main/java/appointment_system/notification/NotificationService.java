@@ -1,12 +1,19 @@
 package appointment_system.notification;
 
-/**
- * Notification abstraction used by the system to send reminder messages.
- *
- * @author Team 3
- * @version 1.0
- */
-public interface NotificationService {
+import java.util.ArrayList;
+import java.util.List;
 
-    void sendReminder(String recipient, String message);
+public class NotificationService {
+
+    private final List<Observer> observers = new ArrayList<>();
+
+    public void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void notifyAllObservers(String message) {
+        for (Observer observer : observers) {
+            observer.notify(message);
+        }
+    }
 }
