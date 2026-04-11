@@ -4,8 +4,6 @@ import appointment_system.domain.AppointmentSlot;
 
 /**
  * Allows administrators to manage reservations.
- *
- 
  */
 public class AdminReservationService {
 

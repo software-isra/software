@@ -1,10 +1,5 @@
 package appointment_system.notification;
 
-/**
- * Simple notification service that prints reminders to the console.
- *
- 
- */
 public class ConsoleNotificationService implements NotificationService {
 
     @Override
