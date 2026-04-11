@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 /**
  * Represents a bookable appointment slot.
  *
- * @author Team 3
- * @version 2.0
  */
 public class AppointmentSlot {
 

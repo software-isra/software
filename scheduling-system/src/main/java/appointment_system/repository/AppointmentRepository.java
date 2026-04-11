@@ -2,11 +2,13 @@ package appointment_system.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import appointment_system.domain.Appointment;
 import appointment_system.domain.AppointmentSlot;
 
 /**
  * In-memory repository for appointment slots and bookings.
+ *
  
  */
 public class AppointmentRepository {
@@ -42,11 +44,33 @@ public class AppointmentRepository {
 
     public boolean hasBooking(String username, AppointmentSlot slot) {
         for (Appointment appointment : appointments) {
-            if (appointment.getUsername().equals(username)
+            if (!appointment.isCancelled()
+                    && appointment.getUsername().equals(username)
                     && appointment.getSlot().equals(slot)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Appointment findActiveAppointment(String username, AppointmentSlot slot) {
+        for (Appointment appointment : appointments) {
+            if (!appointment.isCancelled()
+                    && appointment.getUsername().equals(username)
+                    && appointment.getSlot().equals(slot)) {
+                return appointment;
+            }
+        }
+        return null;
+    }
+
+    public Appointment findActiveAppointmentByUsername(String username) {
+        for (Appointment appointment : appointments) {
+            if (!appointment.isCancelled()
+                    && appointment.getUsername().equals(username)) {
+                return appointment;
+            }
+        }
+        return null;
     }
 }

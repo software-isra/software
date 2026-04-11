@@ -6,8 +6,6 @@ import appointment_system.repository.UserRepository;
 /**
  * Handles administrator authentication and session state.
  *
- * @author Team 3
- * @version 2.0
  */
 public class AuthenticationService {
 

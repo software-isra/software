@@ -2,8 +2,10 @@ package appointment_system.ui;
 
 import appointment_system.domain.Appointment;
 import appointment_system.domain.AppointmentSlot;
+import appointment_system.domain.AppointmentType;
 import appointment_system.repository.AppointmentRepository;
 import appointment_system.repository.UserRepository;
+import appointment_system.service.AdminReservationService;
 import appointment_system.service.AppointmentService;
 import appointment_system.service.AuthenticationService;
 
@@ -17,15 +19,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * GUI for the Appointment Scheduling System.
+ * Final GUI for the Appointment Scheduling System.
  *
  * @author Team 3
- * @version 3.0
+ * @version 4.0
  */
 public class MainGUI extends JFrame {
 
     private final AppointmentService appointmentService;
     private final AuthenticationService authService;
+    private final AdminReservationService adminReservationService;
 
     private JPanel cardPanel;
     private CardLayout cardLayout;
@@ -49,12 +52,15 @@ public class MainGUI extends JFrame {
     private final Color COLOR_HIGH = new Color(231, 76, 60);
     private final Color COLOR_FULL = new Color(149, 165, 166);
 
-    public MainGUI(AuthenticationService authService, AppointmentService appointmentService) {
+    public MainGUI(AuthenticationService authService,
+                   AppointmentService appointmentService,
+                   AdminReservationService adminReservationService) {
         this.authService = authService;
         this.appointmentService = appointmentService;
+        this.adminReservationService = adminReservationService;
 
         setTitle("Appointment Management System");
-        setSize(1200, 780);
+        setSize(1280, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         cardLayout = new CardLayout();
@@ -71,8 +77,8 @@ public class MainGUI extends JFrame {
     }
 
     private JPanel createStartScreen() {
-        JPanel p = new JPanel(new GridBagLayout());
-        p.setBackground(Color.WHITE);
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Color.WHITE);
 
         JPanel box = new JPanel();
         box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
@@ -83,7 +89,7 @@ public class MainGUI extends JFrame {
         title.setForeground(COLOR_PRIMARY);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitle = new JLabel("Professional scheduling with live booking indicators");
+        JLabel subtitle = new JLabel("Smart scheduling with booking indicators and type selection");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         subtitle.setForeground(Color.DARK_GRAY);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -106,8 +112,8 @@ public class MainGUI extends JFrame {
         box.add(Box.createRigidArea(new Dimension(0, 15)));
         box.add(btnAdmin);
 
-        p.add(box);
-        return p;
+        panel.add(box);
+        return panel;
     }
 
     private JPanel createUserBookingView() {
@@ -245,7 +251,6 @@ public class MainGUI extends JFrame {
         int availableSlots = 0;
 
         String selectedFilter = filterComboBox != null ? (String) filterComboBox.getSelectedItem() : "All";
-
         int displayedCount = 0;
 
         for (AppointmentSlot slot : allSlots) {
@@ -347,36 +352,7 @@ public class MainGUI extends JFrame {
         book.setForeground(Color.WHITE);
         book.setEnabled(!slot.isFull());
 
-        book.addActionListener(e -> {
-            String username = JOptionPane.showInputDialog(this, "Enter your username:");
-            if (username == null) {
-                return;
-            }
-
-            try {
-                boolean booked = appointmentService.bookAppointment(username, slot);
-
-                if (booked) {
-                    JOptionPane.showMessageDialog(this, "Appointment booked successfully.");
-                    refreshUserSlots();
-                    refreshAdminTable();
-                } else {
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Booking failed. Slot may be full or already booked by this user.",
-                            "Booking Failed",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        ex.getMessage(),
-                        "Invalid Booking",
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        });
+        book.addActionListener(e -> openBookingDialog(slot));
 
         contentPanel.add(timeLbl);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -394,6 +370,58 @@ public class MainGUI extends JFrame {
         card.add(contentPanel, BorderLayout.CENTER);
 
         return card;
+    }
+
+    private void openBookingDialog(AppointmentSlot slot) {
+        JTextField usernameField = new JTextField();
+
+        JComboBox<AppointmentType> typeCombo = new JComboBox<>(AppointmentType.values());
+        typeCombo.setSelectedItem(AppointmentType.IN_PERSON);
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 8, 8));
+        panel.add(new JLabel("Username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Appointment Type:"));
+        panel.add(typeCombo);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                panel,
+                "Book Appointment",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String username = usernameField.getText();
+        AppointmentType selectedType = (AppointmentType) typeCombo.getSelectedItem();
+
+        try {
+            boolean booked = appointmentService.bookAppointment(username, slot, selectedType);
+
+            if (booked) {
+                JOptionPane.showMessageDialog(this, "Appointment booked successfully.");
+                refreshUserSlots();
+                refreshAdminTable();
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Booking failed. Slot may be full or already booked by this user.",
+                        "Booking Failed",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Invalid Booking",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private Color getSlotIndicatorColor(AppointmentSlot slot) {
@@ -429,8 +457,8 @@ public class MainGUI extends JFrame {
     }
 
     private JPanel createAdminLoginView() {
-        JPanel p = new JPanel(new GridBagLayout());
-        p.setBackground(COLOR_BG);
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(COLOR_BG);
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -483,8 +511,8 @@ public class MainGUI extends JFrame {
         card.add(Box.createRigidArea(new Dimension(0, 10)));
         card.add(backBtn);
 
-        p.add(card);
-        return p;
+        panel.add(card);
+        return panel;
     }
 
     private JPanel createAdminDashboard() {
@@ -508,7 +536,7 @@ public class MainGUI extends JFrame {
         head.add(title, BorderLayout.WEST);
         head.add(logout, BorderLayout.EAST);
 
-        String[] cols = {"User", "Date/Time", "Duration", "Booked", "Capacity Status", "Status"};
+        String[] cols = {"User", "Type", "Date/Time", "Duration", "Booked", "Capacity", "Status"};
         adminTableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -522,10 +550,24 @@ public class MainGUI extends JFrame {
         adminTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         adminTable.setDefaultRenderer(Object.class, new BookingStatusTableRenderer());
 
-        JScrollPane tableScrollPane = new JScrollPane(adminTable);
+        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        actionPanel.setBackground(COLOR_BG);
+
+        JButton refreshBtn = new JButton("Refresh");
+        JButton cancelBtn = new JButton("Cancel Selected");
+        JButton modifyBtn = new JButton("Modify Selected");
+
+        refreshBtn.addActionListener(e -> refreshAdminTable());
+        cancelBtn.addActionListener(e -> cancelSelectedReservation());
+        modifyBtn.addActionListener(e -> modifySelectedReservation());
+
+        actionPanel.add(refreshBtn);
+        actionPanel.add(cancelBtn);
+        actionPanel.add(modifyBtn);
 
         main.add(head, BorderLayout.NORTH);
-        main.add(tableScrollPane, BorderLayout.CENTER);
+        main.add(new JScrollPane(adminTable), BorderLayout.CENTER);
+        main.add(actionPanel, BorderLayout.SOUTH);
 
         return main;
     }
@@ -544,6 +586,7 @@ public class MainGUI extends JFrame {
 
             adminTableModel.addRow(new Object[]{
                     appointment.getUsername(),
+                    appointment.getType(),
                     slot.getStartTime().format(formatter),
                     slot.getDurationMinutes() + " min",
                     slot.getBookedParticipants(),
@@ -553,15 +596,106 @@ public class MainGUI extends JFrame {
         }
     }
 
+    private void cancelSelectedReservation() {
+        int row = adminTable.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Please select a reservation first.");
+            return;
+        }
+
+        Appointment appointment = appointmentService.getAllAppointments().get(row);
+
+        try {
+            boolean cancelled = adminReservationService.cancelReservation(
+                    appointment.getUsername(),
+                    appointment.getSlot()
+            );
+
+            if (cancelled) {
+                JOptionPane.showMessageDialog(this, "Reservation cancelled successfully.");
+                refreshAdminTable();
+                refreshUserSlots();
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to cancel this reservation.");
+            }
+        } catch (IllegalStateException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Access Denied", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void modifySelectedReservation() {
+        int row = adminTable.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Please select a reservation first.");
+            return;
+        }
+
+        Appointment appointment = appointmentService.getAllAppointments().get(row);
+        List<AppointmentSlot> availableSlots = appointmentService.getAvailableSlots();
+
+        DefaultComboBoxModel<SlotItem> model = new DefaultComboBoxModel<>();
+        for (AppointmentSlot slot : availableSlots) {
+            if (!slot.equals(appointment.getSlot())) {
+                model.addElement(new SlotItem(slot));
+            }
+        }
+
+        if (model.getSize() == 0) {
+            JOptionPane.showMessageDialog(this, "No alternative slots available.");
+            return;
+        }
+
+        JComboBox<SlotItem> slotCombo = new JComboBox<>(model);
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 8, 8));
+        panel.add(new JLabel("Select new slot:"));
+        panel.add(slotCombo);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                panel,
+                "Modify Reservation",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        SlotItem selected = (SlotItem) slotCombo.getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+
+        try {
+            boolean modified = adminReservationService.modifyReservation(
+                    appointment.getUsername(),
+                    appointment.getSlot(),
+                    selected.getSlot()
+            );
+
+            if (modified) {
+                JOptionPane.showMessageDialog(this, "Reservation modified successfully.");
+                refreshAdminTable();
+                refreshUserSlots();
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to modify this reservation.");
+            }
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Modification Failed", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private JButton createStyledButton(String text, Color bg) {
-        JButton b = new JButton(text);
-        b.setBackground(bg);
-        b.setForeground(Color.WHITE);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        b.setFocusPainted(false);
-        b.setAlignmentX(Component.CENTER_ALIGNMENT);
-        b.setMaximumSize(new Dimension(250, 45));
-        return b;
+        JButton button = new JButton(text);
+        button.setBackground(bg);
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setMaximumSize(new Dimension(250, 45));
+        return button;
     }
 
     private class BookingStatusTableRenderer extends DefaultTableCellRenderer {
@@ -569,33 +703,55 @@ public class MainGUI extends JFrame {
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            String status = table.getValueAt(row, 5).toString();
+            String status = table.getValueAt(row, 6).toString();
 
             if (!isSelected) {
                 if ("Low Booking".equals(status)) {
-                    c.setBackground(new Color(220, 252, 231));
+                    component.setBackground(new Color(220, 252, 231));
                 } else if ("Medium Booking".equals(status)) {
-                    c.setBackground(new Color(254, 249, 195));
+                    component.setBackground(new Color(254, 249, 195));
                 } else if ("Almost Full".equals(status)) {
-                    c.setBackground(new Color(254, 226, 226));
+                    component.setBackground(new Color(254, 226, 226));
                 } else if ("Full".equals(status)) {
-                    c.setBackground(new Color(229, 231, 235));
+                    component.setBackground(new Color(229, 231, 235));
                 } else {
-                    c.setBackground(Color.WHITE);
+                    component.setBackground(Color.WHITE);
                 }
             }
 
-            return c;
+            return component;
+        }
+    }
+
+    private static class SlotItem {
+        private final AppointmentSlot slot;
+
+        public SlotItem(AppointmentSlot slot) {
+            this.slot = slot;
+        }
+
+        public AppointmentSlot getSlot() {
+            return slot;
+        }
+
+        @Override
+        public String toString() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            return slot.getStartTime().format(formatter)
+                    + " | " + slot.getDurationMinutes() + " min"
+                    + " | capacity " + slot.getBookedParticipants() + "/" + slot.getMaxParticipants();
         }
     }
 
     public static void main(String[] args) {
         AppointmentRepository repo = new AppointmentRepository();
         UserRepository userRepo = new UserRepository();
-        AppointmentService service = new AppointmentService(repo);
-        AuthenticationService auth = new AuthenticationService(userRepo);
+        AppointmentService appointmentService = new AppointmentService(repo);
+        AuthenticationService authService = new AuthenticationService(userRepo);
+        AdminReservationService adminReservationService =
+                new AdminReservationService(authService, appointmentService);
 
         seedSampleSlots(repo);
 
@@ -604,7 +760,8 @@ public class MainGUI extends JFrame {
         } catch (Exception ignored) {
         }
 
-        SwingUtilities.invokeLater(() -> new MainGUI(auth, service));
+        SwingUtilities.invokeLater(() ->
+                new MainGUI(authService, appointmentService, adminReservationService));
     }
 
     private static void seedSampleSlots(AppointmentRepository repo) {

@@ -3,7 +3,7 @@ package appointment_system.domain;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-
+import appointment_system.domain.AppointmentType;
 import org.junit.jupiter.api.Test;
 
 class DomainTest {
@@ -116,5 +116,20 @@ class DomainTest {
     void testAppointmentRejectsBlankUsername() {
         AppointmentSlot slot = new AppointmentSlot(LocalDateTime.now().plusDays(1), 60, 2);
         assertThrows(IllegalArgumentException.class, () -> new Appointment(slot, ""));
+    }
+    @Test
+    void testAppointmentTypeStoredCorrectly() {
+        AppointmentSlot slot = new AppointmentSlot(LocalDateTime.now().plusDays(1), 30, 1);
+        Appointment appointment = new Appointment(slot, "user1", AppointmentType.URGENT);
+
+        assertEquals(AppointmentType.URGENT, appointment.getType());
+    }
+
+    @Test
+    void testDefaultAppointmentTypeIsInPerson() {
+        AppointmentSlot slot = new AppointmentSlot(LocalDateTime.now().plusDays(1), 60, 1);
+        Appointment appointment = new Appointment(slot, "user1");
+
+        assertEquals(AppointmentType.IN_PERSON, appointment.getType());
     }
 }
