@@ -1,0 +1,34 @@
+package appointment_system.notification;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import org.junit.jupiter.api.Test;
+
+class EmailNotificationObserverTest {
+
+    @Test
+    void testNotifyDoesNotThrow() {
+        EmailNotificationObserver observer = new EmailNotificationObserver();
+
+        assertDoesNotThrow(() ->
+                observer.notify("Test email notification message"));
+    }
+
+    @Test
+    void testNotifyWithEmptyMessageDoesNotThrow() {
+        EmailNotificationObserver observer = new EmailNotificationObserver();
+
+        assertDoesNotThrow(() ->
+                observer.notify(""));
+    }
+
+    @Test
+    void testNotifyMultipleMessagesDoesNotThrow() {
+        EmailNotificationObserver observer = new EmailNotificationObserver();
+
+        assertDoesNotThrow(() -> {
+            observer.notify("First email message");
+            observer.notify("Second email message");
+        });
+    }
+}
