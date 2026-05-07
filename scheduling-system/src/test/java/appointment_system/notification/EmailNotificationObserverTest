@@ -1,0 +1,53 @@
+package appointment_system.notification;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
+import appointment_system.domain.User;
+
+class EmailNotificationObserverTest {
+
+    @Test
+    void testConstructorRejectsNullEmail() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new EmailNotificationObserver(null, "pass"));
+    }
+
+    @Test
+    void testConstructorRejectsNullPassword() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new EmailNotificationObserver("email@gmail.com", null));
+    }
+
+    @Test
+    void testNotifyRejectsNullUser() {
+        EmailNotificationObserver observer =
+                new EmailNotificationObserver("test@gmail.com", "pass");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                observer.notify(null, "subject", "message"));
+    }
+
+    @Test
+    void testNotifyRejectsBlankSubject() {
+        EmailNotificationObserver observer =
+                new EmailNotificationObserver("test@gmail.com", "pass");
+
+        User user = new User("ali", "1234", "ali@gmail.com");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                observer.notify(user, "", "message"));
+    }
+
+    @Test
+    void testNotifyRejectsBlankMessage() {
+        EmailNotificationObserver observer =
+                new EmailNotificationObserver("test@gmail.com", "pass");
+
+        User user = new User("ali", "1234", "ali@gmail.com");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                observer.notify(user, "subject", ""));
+    }
+}
