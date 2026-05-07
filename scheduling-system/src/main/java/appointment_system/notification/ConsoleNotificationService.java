@@ -1,5 +1,6 @@
 package appointment_system.notification;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConsoleNotificationService implements NotificationService {
@@ -8,6 +9,6 @@ public class ConsoleNotificationService implements NotificationService {
 
     @Override
     public void sendReminder(String recipient, String message) {
-        LOGGER.info("Reminder sent to " + recipient + ": " + message);
+        LOGGER.log(Level.INFO, "Reminder sent to {0}: {1}", new Object[]{recipient, message});
     }
 }
