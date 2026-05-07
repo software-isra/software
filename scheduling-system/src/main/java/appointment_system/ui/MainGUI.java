@@ -52,6 +52,8 @@ public class MainGUI extends JFrame {
     private final Color COLOR_HIGH = new Color(239, 68, 68);
     private final Color COLOR_FULL = new Color(107, 114, 128);
 
+    private static final String FONT_FAMILY = "Segoe UI";
+
     public MainGUI(AuthenticationService authService,
                    AppointmentService appointmentService,
                    AdminReservationService adminReservationService) {
@@ -85,12 +87,12 @@ public class MainGUI extends JFrame {
         box.setOpaque(false);
 
         JLabel title = new JLabel("Appointment Management Portal");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 34));
+        title.setFont(new Font(FONT_FAMILY, Font.BOLD, 34));
         title.setForeground(COLOR_PRIMARY);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel subtitle = new JLabel("Smart scheduling with booking indicators and type selection");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        subtitle.setFont(new Font(FONT_FAMILY, Font.PLAIN, 16));
         subtitle.setForeground(Color.DARK_GRAY);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -125,7 +127,7 @@ public class MainGUI extends JFrame {
         header.setBorder(new EmptyBorder(15, 25, 15, 25));
 
         JLabel title = new JLabel("Available Appointment Slots");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setFont(new Font(FONT_FAMILY, Font.BOLD, 24));
         title.setForeground(COLOR_PRIMARY);
 
         JButton back = createStyledButton("Home", COLOR_PRIMARY);
@@ -161,7 +163,7 @@ public class MainGUI extends JFrame {
         filterPanel.setBorder(new EmptyBorder(0, 20, 10, 20));
 
         JLabel filterLabel = new JLabel("Filter:");
-        filterLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        filterLabel.setFont(new Font(FONT_FAMILY, Font.BOLD, 13));
 
         filterComboBox = new JComboBox<>(new String[]{
                 "All",
@@ -205,12 +207,12 @@ public class MainGUI extends JFrame {
         ));
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        titleLabel.setFont(new Font(FONT_FAMILY, Font.PLAIN, 13));
         titleLabel.setForeground(Color.DARK_GRAY);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel valueLabel = new JLabel("0");
-        valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        valueLabel.setFont(new Font(FONT_FAMILY, Font.BOLD, 24));
         valueLabel.setForeground(color);
         valueLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -232,7 +234,7 @@ public class MainGUI extends JFrame {
         colorBox.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(new Font(FONT_FAMILY, Font.PLAIN, 13));
 
         panel.add(colorBox);
         panel.add(label);
@@ -272,7 +274,7 @@ public class MainGUI extends JFrame {
         if (displayedCount == 0) {
             userGridPanel.setLayout(new BorderLayout());
             JLabel emptyLabel = new JLabel("No slots match the selected filter.", SwingConstants.CENTER);
-            emptyLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            emptyLabel.setFont(new Font(FONT_FAMILY, Font.BOLD, 18));
             userGridPanel.add(emptyLabel, BorderLayout.CENTER);
         } else {
             userGridPanel.setLayout(new GridLayout(0, 3, 20, 20));
@@ -325,20 +327,20 @@ public class MainGUI extends JFrame {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         JLabel timeLbl = new JLabel(slot.getStartTime().format(formatter));
-        timeLbl.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        timeLbl.setFont(new Font(FONT_FAMILY, Font.BOLD, 16));
         timeLbl.setForeground(COLOR_PRIMARY);
         timeLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel durationLbl = new JLabel("Duration: " + slot.getDurationMinutes() + " min");
-        durationLbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        durationLbl.setFont(new Font(FONT_FAMILY, Font.PLAIN, 14));
         durationLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel capacityLbl = new JLabel("Booked: " + slot.getBookedParticipants() + "/" + slot.getMaxParticipants());
-        capacityLbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        capacityLbl.setFont(new Font(FONT_FAMILY, Font.PLAIN, 14));
         capacityLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel statusLbl = new JLabel(statusText + " (" + slot.getBookingPercentage() + "%)");
-        statusLbl.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        statusLbl.setFont(new Font(FONT_FAMILY, Font.BOLD, 14));
         statusLbl.setForeground(indicatorColor);
         statusLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -504,7 +506,7 @@ public class MainGUI extends JFrame {
 
         JLabel title = new JLabel("ADMIN AUTHENTICATION");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        title.setFont(new Font(FONT_FAMILY, Font.BOLD, 18));
 
         card.add(title);
         card.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -529,7 +531,7 @@ public class MainGUI extends JFrame {
 
         JLabel title = new JLabel("Administration Dashboard");
         title.setForeground(Color.WHITE);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setFont(new Font(FONT_FAMILY, Font.BOLD, 22));
 
         JButton logout = createStyledButton("Logout", COLOR_HIGH);
         logout.addActionListener(e -> {
@@ -550,8 +552,8 @@ public class MainGUI extends JFrame {
 
         adminTable = new JTable(adminTableModel);
         adminTable.setRowHeight(28);
-        adminTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        adminTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        adminTable.getTableHeader().setFont(new Font(FONT_FAMILY, Font.BOLD, 13));
+        adminTable.setFont(new Font(FONT_FAMILY, Font.PLAIN, 13));
         adminTable.setDefaultRenderer(Object.class, new BookingStatusTableRenderer());
 
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
@@ -695,7 +697,7 @@ public class MainGUI extends JFrame {
         JButton button = new JButton(text);
         button.setBackground(bg);
         button.setForeground(Color.WHITE);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setFont(new Font(FONT_FAMILY, Font.BOLD, 14));
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setOpaque(true);
