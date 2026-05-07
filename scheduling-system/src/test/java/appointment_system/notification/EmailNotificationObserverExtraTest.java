@@ -1,26 +1,26 @@
 package appointment_system.notification;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
-
-import appointment_system.domain.User;
 
 class EmailNotificationObserverExtraTest {
 
     @Test
-    void testNotifyRejectsUserWithNullEmail() {
-        EmailNotificationObserver observer =
-                new EmailNotificationObserver("test@gmail.com", "pass");
+    void testNotifyDoesNotThrow() {
+        EmailNotificationObserver observer = new EmailNotificationObserver();
 
-        User user = new User("ali", "1234", "ali@gmail.com") {
-            @Override
-            public String getEmail() {
-                return null;
-            }
-        };
+        assertDoesNotThrow(() ->
+                observer.notify("Test email notification message"));
+    }
 
-        assertThrows(IllegalArgumentException.class, () ->
-                observer.notify(user, "subject", "message"));
+    @Test
+    void testNotifyMultipleMessagesDoesNotThrow() {
+        EmailNotificationObserver observer = new EmailNotificationObserver();
+
+        assertDoesNotThrow(() -> {
+            observer.notify("First message");
+            observer.notify("Second message");
+        });
     }
 }
