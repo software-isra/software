@@ -53,6 +53,7 @@ public class MainGUI extends JFrame {
     private final Color COLOR_FULL = new Color(107, 114, 128);
 
     private static final String FONT_FAMILY = "Segoe UI";
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
 
     public MainGUI(AuthenticationService authService,
                    AppointmentService appointmentService,
@@ -324,7 +325,7 @@ public class MainGUI extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setOpaque(false);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
         JLabel timeLbl = new JLabel(slot.getStartTime().format(formatter));
         timeLbl.setFont(new Font(FONT_FAMILY, Font.BOLD, 16));
@@ -585,7 +586,7 @@ public class MainGUI extends JFrame {
 
         adminTableModel.setRowCount(0);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
         for (Appointment appointment : appointmentService.getAllAppointments()) {
             AppointmentSlot slot = appointment.getSlot();
@@ -749,7 +750,7 @@ public class MainGUI extends JFrame {
 
         @Override
         public String toString() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
             return slot.getStartTime().format(formatter)
                     + " | " + slot.getDurationMinutes() + " min"
                     + " | capacity " + slot.getBookedParticipants() + "/" + slot.getMaxParticipants();
